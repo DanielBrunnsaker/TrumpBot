@@ -110,7 +110,7 @@ def generate_sample(model, lngth):
     pattern = X[start]
 
     ichar = dict(enumerate(c_indices.keys()))
-    print(pattern)
+    #print(pattern)
     for i in range(lngth):
 
         x = np.reshape(pattern, (1, len(pattern), 1))
@@ -164,7 +164,7 @@ def rnn_model(nodes, drop):
     return model
 
 
-txt_path = r'C:\Users\Daniel Brunnsåker\Desktop\trump\data\speech.txt'
+txt_path = r'C:\Users\Daniel Brunnsåker\Desktop\trump\data\speech_addition.txt'
 raw_string = load_text(txt_path)
 
 seq_length = 5
