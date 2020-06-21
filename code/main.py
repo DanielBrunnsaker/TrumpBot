@@ -9,6 +9,7 @@ import numpy as np
 from tensorflow import keras
 from keras_preprocessing.text import Tokenizer
 from sklearn.preprocessing import normalize
+import random
 
 def load_text(txt_path):
     '''
@@ -105,10 +106,11 @@ def generate_sample(model, lngth):
     '''
     
     txt = []
-    start = np.random.randint(1,100 ) #random seed
+    start = np.random.randint(1,10000) #random seed
     pattern = X[start]
-    ichar = dict(enumerate(c_indices.keys()))
 
+    ichar = dict(enumerate(c_indices.keys()))
+    print(pattern)
     for i in range(lngth):
 
         x = np.reshape(pattern, (1, len(pattern), 1))
@@ -132,12 +134,25 @@ def generate_sample(model, lngth):
 class CustomCallback(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs=None):
+        '''
+        Prints a generated sample after each epoch, allows for quick and easy performance surveys
+        '''
+        
         print('\n \n Generating sample: ')
         sample = generate_sample(model, 100)
         print(sample)
         print('\n ')
 
 def rnn_model(nodes, drop):
+    '''
+    Model architecture
+    
+    Input:
+        nodes: amount of trainable nodes in LSTM-layer
+        drop: dropout-rate (0-0.5)
+    Output:
+        model: sequential model
+    '''
     
     model = keras.Sequential(
     [
@@ -149,31 +164,21 @@ def rnn_model(nodes, drop):
     return model
 
 
-txt_path = r'C:\Users\Daniel Brunnsåker\Desktop\trump\speech.txt'
+txt_path = r'C:\Users\Daniel Brunnsåker\Desktop\trump\data\speech.txt'
 raw_string = load_text(txt_path)
 
 seq_length = 5
 X, y, c_indices = define_sequences(raw_string,seq_length)
 X, y = convert_format(X,y,c_indices, seq_length)
 
-model = rnn_model(4, 0.5)
+model = rnn_model(256, 0.25)
 
 model.compile(optimizer='adam', loss='categorical_crossentropy')
 print(model.summary())
 
-checkpoint_filepath = 'F:/Software/models/checkpoint'
-model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
-    filepath=checkpoint_filepath,
-    save_weights_only=True,
-    monitor='val_acc',
-    mode='max',
-    save_best_only=True)
-
 model.fit(X, y, epochs=250, batch_size=128, verbose = 1,callbacks=[CustomCallback()])
 
 
-#sample = generate_sample(model, 100)
-#print(sample)
 
 
 
