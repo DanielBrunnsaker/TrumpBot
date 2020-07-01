@@ -207,14 +207,6 @@ model.fit(X, y, epochs=250, batch_size=128, verbose = 1,callbacks=[CustomCallbac
 
 
 
-model = keras.models.load_model(r'C:\Users\Daniel Brunnsåker\Desktop\trump\model')
-
-
-
-
-
-
-
 
 
 
