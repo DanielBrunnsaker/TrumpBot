@@ -164,14 +164,36 @@ def rnn_model(nodes, drop):
     return model
 
 
+def stacked_rnn_model(node_vector, drop):
+    '''
+    Model architecture
+    
+    Input:
+        nodes: amount of trainable nodes in LSTM-layer
+        drop: dropout-rate (0-0.5)
+    Output:
+        model: sequential model
+    '''
+    
+    model = keras.Sequential(
+    [
+     keras.layers.LSTM(node_vector[0], return_sequences=True,input_shape = (X.shape[1], X.shape[2])),
+     keras.layers.Dropout(drop),
+     keras.layers.LSTM(node_vector[1], return_sequences=False),
+     keras.layers.Dropout(drop),
+     keras.layers.Dense(y.shape[1],activation = 'softmax')
+     ])
+    
+    return model
+
 txt_path = r'C:\Users\Daniel Brunnsåker\Desktop\trump\data\speech_addition.txt'
 raw_string = load_text(txt_path)
 
 seq_length = 5
 X, y, c_indices = define_sequences(raw_string,seq_length)
 X, y = convert_format(X,y,c_indices, seq_length)
-
-model = rnn_model(256, 0.25)
+nodes = [128,64]
+model = stacked_rnn_model(nodes, 0.25)
 
 model.compile(optimizer='adam', loss='categorical_crossentropy')
 print(model.summary())
@@ -185,6 +207,7 @@ model.fit(X, y, epochs=250, batch_size=128, verbose = 1,callbacks=[CustomCallbac
 
 
 
+model = keras.models.load_model(r'C:\Users\Daniel Brunnsåker\Desktop\trump\model')
 
 
 
